@@ -4,7 +4,7 @@
   --color-background: #fffcf9;
   --color-foreground: #1a1a1a;
   
-  /* Brand Orange Palette - No Purples! */
+  /* Brand Orange Palette - Simplified for v4 */
   --color-brand-orange-50: #fff7ed;
   --color-brand-orange-100: #ffedd5;
   --color-brand-orange-200: #fed7aa;
@@ -14,8 +14,8 @@
   --color-brand-orange-600: #ea580c;
   --color-brand-orange-700: #c2410c;
   
-  --color-accent: var(--color-brand-orange-500);
-  --color-accent-secondary: var(--color-brand-orange-400);
+  --color-accent: #f97316;
+  --color-accent-secondary: #fb923c;
   
   --color-card-bg: rgba(255, 255, 255, 0.7);
   --color-card-border: rgba(249, 115, 22, 0.08);
@@ -24,6 +24,9 @@
   --color-text-muted: #7c2d12;
 
   --font-sans: "Inter", var(--font-geist-sans), system-ui, sans-serif;
+  
+  /* Force disable dark mode in Tailwind v4 */
+  --color-scheme: light;
 }
 
 @layer base {
@@ -40,10 +43,11 @@
   body {
     max-width: 100vw;
     overflow-x: hidden;
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: #fffcf9;
+    color: #1a1a1a;
     height: 100%;
-    color-scheme: light;
+    /* Override any browser-level dark mode */
+    color-scheme: light !important;
   }
 
   body {
@@ -51,7 +55,7 @@
     z-index: 0;
   }
 
-  /* Refined Orange Gradient - Strict amber/orange tones */
+  /* Refined Orange Gradient */
   body::before {
     content: "";
     position: fixed;
@@ -77,10 +81,10 @@
 
 @layer components {
   .glass {
-    background: var(--color-card-bg);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--color-card-border);
+    border: 1px solid rgba(249, 115, 22, 0.08);
     box-shadow: 
       0 10px 40px -10px rgba(249, 115, 22, 0.08),
       0 0 1px 0 rgba(249, 115, 22, 0.1);
@@ -94,11 +98,17 @@
   }
 
   .btn-orange {
-    @apply bg-brand-orange-500 text-white font-bold py-3 px-6 rounded-2xl hover:bg-brand-orange-600 transition-all shadow-lg shadow-brand-orange-100;
+    background-color: #f97316;
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    transition: all 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2);
   }
   
-  .btn-orange-outline {
-    @apply border-2 border-brand-orange-500 text-brand-orange-600 font-bold py-3 px-6 rounded-2xl hover:bg-brand-orange-50 transition-all;
+  .btn-orange:hover {
+    background-color: #ea580c;
   }
 }
 
@@ -116,12 +126,12 @@
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--color-brand-orange-100);
+    background: #ffedd5;
     border-radius: 10px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--color-brand-orange-200);
+    background: #fed7aa;
   }
 }
 

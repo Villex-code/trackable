@@ -16,8 +16,6 @@ const presets = [
   { id: 'sage-light', name: 'Pale Sage', style: { background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' }, darkText: true },
   { id: 'lavender-mist', name: 'Lavender', style: { background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)' }, darkText: true },
   { id: 'sunset-soft', name: 'Sunset', style: { background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)' }, darkText: true },
-  { id: 'midnight-subtle', name: 'Twilight', style: { background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }, darkText: false },
-  { id: 'carbon', name: 'Carbon', style: { background: 'linear-gradient(135deg, #334155 0%, #1e293b 100%)' }, darkText: false },
 ];
 
 export default function ThemePicker({ onSelect, current }: ThemePickerProps) {

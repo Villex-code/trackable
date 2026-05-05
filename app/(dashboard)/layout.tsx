@@ -53,13 +53,6 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       "sage-light": "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
       "lavender-mist": "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
       "sunset-soft": "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
-      "midnight-subtle": "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-      carbon: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
-      sunset: "linear-gradient(135deg, #fb923c 0%, #ec4899 50%, #e11d48 100%)",
-      midnight:
-        "linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%)",
-      emerald: "linear-gradient(135deg, #10b981 0%, #0d9488 50%, #0891b2 100%)",
-      ocean: "linear-gradient(135deg, #60a5fa 0%, #6366f1 50%, #8b5cf6 100%)",
       warm: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 50%, #fdba74 100%)",
       default: "#fffcf9",
     };

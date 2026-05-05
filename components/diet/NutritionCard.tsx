@@ -2,13 +2,13 @@ import { LucideIcon } from "lucide-react";
 
 interface NutritionCardProps {
   title: string;
-  value: number;
+  value: string | number;
   icon: LucideIcon;
   color: "orange" | "blue" | "purple" | "emerald" | "red";
   unit?: string;
 }
 
-export default function NutritionCard({ title, value, icon: Icon, color, unit = "kcal" }: NutritionCardProps) {
+export default function NutritionCard({ title, value, icon: Icon, color, unit = "" }: NutritionCardProps) {
   const colors = {
     orange: "text-orange-500 bg-orange-50",
     blue: "text-blue-500 bg-blue-50",

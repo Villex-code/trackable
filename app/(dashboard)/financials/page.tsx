@@ -12,15 +12,17 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   RefreshCcwIcon,
-  PieChartIcon
+  PieChartIcon,
+  ShareIcon
 } from "lucide-react";
 import { format, startOfDay, endOfDay, subDays, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 
 // Components
-import FinanceCard from "@/components/financials/FinanceCard";
+import NutritionCard from "@/components/diet/NutritionCard";
 import TransactionItem from "@/components/financials/TransactionItem";
 import AddTransactionModal from "@/components/financials/AddTransactionModal";
 import FinanceViewSwitcher from "@/components/financials/FinanceViewSwitcher";
+import BulkImportModal from "@/components/global/BulkImportModal";
 
 export default function FinancialsPage() {
   const { user } = useAuth();
@@ -29,7 +31,20 @@ export default function FinancialsPage() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"daily" | "weekly" | "monthly" | "yearly">("monthly");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleGlobalPaste = (e: ClipboardEvent) => {
+      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
+      setIsImportModalOpen(true);
+    };
+
+    window.addEventListener("paste", handleGlobalPaste);
+    return () => window.removeEventListener("paste", handleGlobalPaste);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -79,6 +94,18 @@ export default function FinancialsPage() {
     }
   }
 
+  async function handleBulkImport(data: any[]) {
+    if (!user) return;
+    const logsWithUser = data.map(item => ({
+      ...item,
+      user_id: user.uid,
+      logged_at: item.logged_at || new Date().toISOString()
+    }));
+    const { error } = await supabase.from("financial_logs").insert(logsWithUser);
+    if (error) throw error;
+    fetchData();
+  }
+
   async function deleteTransaction(id: string) {
     const { error } = await supabase.from("financial_logs").delete().eq("id", id);
     if (!error) fetchData();
@@ -92,7 +119,6 @@ export default function FinancialsPage() {
 
   return (
     <div className="space-y-10 pb-20">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
         <div className="space-y-4">
           <h2 className="text-4xl font-bold text-slate-800 tracking-tight">Financials</h2>
@@ -100,7 +126,6 @@ export default function FinancialsPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4">
-           {/* Date Navigation */}
            <div className="flex items-center space-x-4 bg-white/50 p-2 rounded-2xl border border-slate-100">
               <button onClick={() => setSelectedDate(subDays(selectedDate, view === 'daily' ? 1 : view === 'weekly' ? 7 : view === 'monthly' ? 30 : 365))} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
                 <ChevronLeftIcon size={18} className="text-slate-400" />
@@ -116,48 +141,57 @@ export default function FinancialsPage() {
               </button>
            </div>
 
-           <button 
-             onClick={() => setIsModalOpen(true)}
-             className="flex items-center space-x-2 bg-slate-800 text-white px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-slate-200"
-           >
-             <PlusIcon size={18} />
-             <span>Add Transaction</span>
-           </button>
+           <div className="flex gap-3">
+              <button 
+                onClick={() => setIsImportModalOpen(true)}
+                className="p-3.5 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                title="Bulk Import (Cmd+V)"
+              >
+                <ShareIcon size={18} className="rotate-180" />
+              </button>
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center space-x-2 bg-brand-orange-500 text-white px-6 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-brand-orange-600 transition-all shadow-xl shadow-brand-orange-500/20 active:scale-95"
+              >
+                <PlusIcon size={18} />
+                <span>Add Transaction</span>
+              </button>
+           </div>
         </div>
       </div>
 
-      {/* Analytics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <FinanceCard 
+        <NutritionCard 
           title="Net Balance" 
-          value={`$${netBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} 
+          value={netBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })} 
           icon={WalletIcon} 
-          color="slate" 
+          color="orange" 
+          unit="$"
         />
-        <FinanceCard 
+        <NutritionCard 
           title="Total Income" 
-          value={`$${totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} 
+          value={totalIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })} 
           icon={ArrowUpRightIcon} 
           color="emerald" 
-          trend="up"
+          unit="$"
         />
-        <FinanceCard 
-          title="Recurring Monthly" 
-          value={`$${recurringTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} 
+        <NutritionCard 
+          title="Recurring" 
+          value={recurringTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })} 
           icon={RefreshCcwIcon} 
           color="blue" 
+          unit="$"
         />
-        <FinanceCard 
-          title="One-time Expenses" 
-          value={`$${oneTimeTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} 
+        <NutritionCard 
+          title="Expenses" 
+          value={oneTimeTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })} 
           icon={CreditCardIcon} 
           color="purple" 
+          unit="$"
         />
       </div>
 
-      {/* Split view for Recurring vs One-time */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recurring Payments Section */}
         <div className="glass rounded-[40px] border border-white/50 overflow-hidden">
           <div className="p-8 border-b border-slate-100 flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-800 flex items-center space-x-3">
@@ -182,7 +216,6 @@ export default function FinancialsPage() {
           </div>
         </div>
 
-        {/* One-time Payments Section */}
         <div className="glass rounded-[40px] border border-white/50 overflow-hidden">
           <div className="p-8 border-b border-slate-100 flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-800 flex items-center space-x-3">
@@ -207,6 +240,14 @@ export default function FinancialsPage() {
           </div>
         </div>
       </div>
+
+      <BulkImportModal 
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleBulkImport}
+        title="Transactions"
+        expectedFields={["amount", "type", "category"]}
+      />
 
       <AddTransactionModal 
         isOpen={isModalOpen} 

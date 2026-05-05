@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { BellIcon, PlusIcon, Trash2Icon, TimerIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { BellIcon, Trash2Icon, TimerIcon } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { format, differenceInSeconds, isAfter } from "date-fns";
+import { differenceInSeconds, isAfter } from "date-fns";
+import { useAudio } from "@/lib/useAudio";
 
 export default function ReminderSection({ userId }: { userId: string }) {
   const supabase = createClient();
   const [reminders, setReminders] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [minutes, setMinutes] = useState("");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { play } = useAudio();
 
   useEffect(() => {
     fetchReminders();
@@ -56,19 +57,12 @@ export default function ReminderSection({ userId }: { userId: string }) {
       return prev.map(r => {
         const remindAt = new Date(r.remind_at);
         if (!r.triggered && isAfter(now, remindAt)) {
-          playNotification();
+          play();
           return { ...r, triggered: true };
         }
         return r;
       });
     });
-  }
-
-  function playNotification() {
-    if (!audioRef.current) {
-      audioRef.current = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3");
-    }
-    audioRef.current.play().catch(e => console.log("Audio play failed:", e));
   }
 
   async function completeReminder(id: string) {
@@ -82,36 +76,36 @@ export default function ReminderSection({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="glass rounded-[32px] border border-white/50 overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 className="font-bold text-slate-800">Quick Reminders</h3>
-        <BellIcon size={18} className="text-blue-500" />
+    <div className="glass rounded-[32px] border border-white/50 overflow-hidden flex flex-col h-[350px]">
+      <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white/20">
+        <h3 className="text-sm font-black uppercase tracking-widest text-slate-800">Quick Reminders</h3>
+        <BellIcon size={16} className="text-blue-500" />
       </div>
 
-      <div className="p-6">
-        <form onSubmit={addReminder} className="space-y-3 mb-6">
+      <div className="p-5 flex-1 flex flex-col min-h-0">
+        <form onSubmit={addReminder} className="space-y-2 mb-4">
           <input 
             type="text" 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Remind me to..." 
-            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-200"
+            className="w-full bg-slate-50/50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-200"
           />
-          <div className="flex space-x-3">
+          <div className="flex space-x-2">
              <input 
               type="number" 
               value={minutes}
               onChange={(e) => setMinutes(e.target.value)}
-              placeholder="In minutes" 
-              className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-200"
+              placeholder="Min" 
+              className="w-20 bg-slate-50/50 border border-slate-100 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-200 text-center"
             />
-            <button type="submit" className="px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-colors text-xs font-bold uppercase tracking-widest">
-              Set
+            <button type="submit" className="flex-1 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 shadow-lg shadow-slate-900/10">
+              Set Alert
             </button>
           </div>
         </form>
 
-        <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar">
+        <div className="space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1">
           {reminders.map((r) => {
             const now = new Date();
             const remindAt = new Date(r.remind_at);
@@ -119,21 +113,23 @@ export default function ReminderSection({ userId }: { userId: string }) {
             const isOverdue = diff <= 0;
 
             return (
-              <div key={r.id} className={`p-4 rounded-2xl border transition-all ${isOverdue ? 'bg-red-50 border-red-100' : 'bg-white/50 border-transparent hover:border-slate-100'}`}>
-                <div className="flex justify-between items-start mb-2">
-                   <h4 className={`text-sm font-bold truncate ${isOverdue ? 'text-red-600' : 'text-slate-800'}`}>{r.title}</h4>
-                   <button onClick={() => deleteReminder(r.id)} className="text-slate-300 hover:text-red-500 transition-colors">
-                      <Trash2Icon size={14} />
+              <div key={r.id} className={`p-3 rounded-2xl border transition-all duration-500 ${isOverdue ? 'bg-red-50/50 border-red-200 shadow-lg shadow-red-500/5 animate-pulse' : 'bg-white/30 border-slate-50 hover:border-blue-100'}`}>
+                <div className="flex justify-between items-start mb-1">
+                   <h4 className={`text-xs font-bold truncate flex-1 ${isOverdue ? 'text-red-600' : 'text-slate-800'}`}>{r.title}</h4>
+                   <button onClick={() => deleteReminder(r.id)} className="text-slate-300 hover:text-red-500 transition-colors ml-2">
+                      <Trash2Icon size={12} />
                    </button>
                 </div>
                 <div className="flex items-center justify-between">
-                   <div className="flex items-center space-x-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      <TimerIcon size={12} />
-                      <span>{isOverdue ? 'Overdue' : `${Math.floor(diff / 60)}m ${diff % 60}s left`}</span>
+                   <div className="flex items-center space-x-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      <TimerIcon size={10} className={isOverdue ? 'text-red-400' : 'text-blue-400'} />
+                      <span className={isOverdue ? 'text-red-500' : ''}>
+                        {isOverdue ? 'Overdue' : `${Math.floor(diff / 60)}m ${diff % 60}s`}
+                      </span>
                    </div>
                    <button 
                     onClick={() => completeReminder(r.id)}
-                    className="text-[10px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-widest"
+                    className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg transition-all ${isOverdue ? 'bg-red-600 text-white shadow-lg shadow-red-500/20' : 'text-blue-600 hover:bg-blue-50'}`}
                    >
                      Done
                    </button>
@@ -142,7 +138,10 @@ export default function ReminderSection({ userId }: { userId: string }) {
             );
           })}
           {reminders.length === 0 && (
-            <p className="text-center text-slate-300 text-xs py-4 italic">No active reminders.</p>
+            <div className="flex flex-col items-center justify-center py-6 opacity-30 scale-75">
+               <BellIcon size={40} className="text-slate-300 mb-2" />
+               <p className="text-center text-slate-400 text-[10px] font-black uppercase tracking-widest">No Alerts Set</p>
+            </div>
           )}
         </div>
       </div>

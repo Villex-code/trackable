@@ -11,12 +11,12 @@ interface PopupLayoutProps {
   className?: string;
 }
 
-export default function PopupLayout({ 
-  title, 
-  description, 
-  children, 
+export default function PopupLayout({
+  title,
+  description,
+  children,
   footer,
-  className 
+  className,
 }: PopupLayoutProps) {
   return (
     <div className={cn("flex flex-col h-full", className)}>
@@ -33,16 +33,10 @@ export default function PopupLayout({
       </div>
 
       {/* Content */}
-      <div className="flex-1">
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
 
       {/* Footer Actions */}
-      {footer && (
-        <div className="mt-10 flex gap-4">
-          {footer}
-        </div>
-      )}
+      {footer && <div className="mt-10 flex gap-4">{footer}</div>}
     </div>
   );
 }

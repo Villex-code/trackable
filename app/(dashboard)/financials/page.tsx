@@ -245,8 +245,8 @@ export default function FinancialsPage() {
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
         onImport={handleBulkImport}
-        title="Transactions"
-        expectedFields={["amount", "type", "category"]}
+        title="Financial Transactions"
+        expectedFields={["amount", "type", "category", "is_recurring"]}
       />
 
       <AddTransactionModal 

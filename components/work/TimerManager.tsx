@@ -43,141 +43,137 @@ export default function TimerManager({ onLogSession }: TimerManagerProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="space-y-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {timers.map((timer) => (
           <div
             key={timer.id}
-            className={`glass p-6 rounded-[32px] border transition-all duration-500 flex flex-col items-center relative group overflow-hidden ${
+            className={`group bg-white p-8 rounded-[40px] border transition-all duration-500 flex flex-col items-center relative overflow-hidden ${
               timer.isActive 
-                ? 'border-blue-400/50 shadow-2xl shadow-blue-500/10' 
+                ? 'border-blue-100 shadow-[0_20px_50px_rgba(59,130,246,0.12)] scale-[1.02]' 
                 : timer.isFinished
-                ? 'border-red-400 bg-red-50/20 shadow-2xl shadow-red-500/10'
-                : 'border-white/50 hover:border-blue-200'
+                ? 'border-red-100 bg-red-50/20 shadow-[0_20px_50px_rgba(239,68,68,0.12)]'
+                : 'border-slate-50 hover:border-slate-100 shadow-xl shadow-slate-200/20'
             }`}
           >
-            {timer.isFinished && (
-               <div className="absolute top-3 left-3 animate-bounce">
-                  <BellRingIcon size={16} className="text-red-500" />
-               </div>
-            )}
-
-            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => deleteTimer(timer.id)}
-                className="p-2 text-slate-300 hover:text-red-500 transition-colors"
-              >
-                <Trash2Icon size={14} />
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+            {/* Top Indicator */}
+            <div className="flex items-center space-x-2 text-[9px] font-black uppercase tracking-[0.2em] mb-8">
               {timer.mode === "up" ? (
-                <ClockIcon size={10} className="text-blue-500" />
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
               ) : (
-                <TimerIcon size={10} className="text-purple-500" />
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
               )}
-              <span>{timer.name || "Focus Session"}</span>
+              <span className="text-slate-400">{timer.name || "Focus Session"}</span>
             </div>
 
-            <div className={`text-4xl font-black tabular-nums transition-colors duration-500 ${
+            {/* Time Display */}
+            <div className={`text-5xl font-black tabular-nums transition-colors duration-500 mb-2 ${
               timer.isFinished ? 'text-red-600 animate-pulse' : 
-              timer.isActive ? 'text-blue-600' : 'text-slate-800'
+              timer.isActive ? 'text-slate-900' : 'text-slate-300'
             }`}>
               {formatTime(timer.seconds)}
             </div>
 
-            {timer.mode === "down" && (
-              <div className="w-24 h-1 bg-slate-100 rounded-full mt-4 overflow-hidden p-0.5">
-                <div 
-                  className={`h-full rounded-full transition-all duration-1000 ${timer.isFinished ? 'bg-red-500' : 'bg-blue-500'}`}
-                  style={{ width: `${(timer.seconds / timer.initialCountdown) * 100}%` }}
-                />
-              </div>
-            )}
+            {/* Sub-label */}
+            <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-10">
+              {timer.mode === "up" ? "Elapsed Time" : "Time Remaining"}
+            </p>
 
-            <div className="flex items-center space-x-3 mt-6">
-              <button
-                onClick={() => toggleTimer(timer.id)}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-lg active:scale-90 ${
-                  timer.isActive
-                    ? "bg-slate-900 text-white shadow-slate-900/20"
-                    : timer.isFinished
-                    ? "bg-red-500 text-white shadow-red-500/20 animate-pulse"
-                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20"
-                }`}
-              >
-                {timer.isActive ? (
-                  <SquareIcon size={18} fill="currentColor" />
-                ) : (
-                  <PlayIcon size={18} fill="currentColor" className="ml-0.5" />
-                )}
-              </button>
+            {/* Controls */}
+            <div className="flex items-center space-x-4 w-full">
+               <button
+                 onClick={() => toggleTimer(timer.id)}
+                 className={`flex-1 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95 ${
+                   timer.isActive
+                     ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20"
+                     : timer.isFinished
+                     ? "bg-red-500 text-white shadow-xl shadow-red-500/20 animate-pulse"
+                     : "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20"
+                 }`}
+               >
+                 {timer.isActive ? (
+                   <SquareIcon size={18} fill="currentColor" />
+                 ) : (
+                   <div className="flex items-center space-x-2">
+                     <PlayIcon size={16} fill="currentColor" className="ml-0.5" />
+                     <span className="text-xs font-black uppercase tracking-widest">Start</span>
+                   </div>
+                 )}
+               </button>
 
-              <div className="flex items-center bg-slate-50 rounded-2xl border border-slate-100 p-1">
-                <button
-                  onClick={() => resetTimer(timer.id)}
-                  className="w-10 h-10 rounded-xl text-slate-400 flex items-center justify-center hover:bg-white hover:text-slate-600 hover:shadow-sm transition-all"
-                  title="Reset"
-                >
-                  <RotateCcwIcon size={16} />
-                </button>
-
-                <button
-                  onClick={() => logTimer(timer.id, onLogSession)}
-                  className="w-10 h-10 rounded-xl text-emerald-500 flex items-center justify-center hover:bg-white hover:shadow-sm transition-all"
-                  title="Log Session"
-                >
-                  <CheckCircle2Icon size={16} />
-                </button>
-              </div>
+               <div className="flex items-center bg-slate-50 p-1.5 rounded-2xl">
+                 <button
+                   onClick={() => resetTimer(timer.id)}
+                   className="w-11 h-11 rounded-xl text-slate-400 flex items-center justify-center hover:bg-white hover:text-slate-600 hover:shadow-sm transition-all"
+                   title="Reset"
+                 >
+                   <RotateCcwIcon size={18} />
+                 </button>
+                 <button
+                   onClick={() => logTimer(timer.id, onLogSession)}
+                   className="w-11 h-11 rounded-xl text-emerald-500 flex items-center justify-center hover:bg-white hover:text-emerald-600 hover:shadow-sm transition-all"
+                   title="Complete & Log"
+                 >
+                   <CheckCircle2Icon size={18} />
+                 </button>
+               </div>
             </div>
+
+            {/* Trash Icon - Subtle */}
+            <button
+              onClick={() => deleteTimer(timer.id)}
+              className="absolute top-4 right-4 p-2 text-slate-100 hover:text-red-300 transition-colors opacity-0 group-hover:opacity-100"
+            >
+              <Trash2Icon size={14} />
+            </button>
           </div>
         ))}
 
+        {/* Add Timer Button - Minimalist */}
         <button
           onClick={() => setShowAddMenu(true)}
-          className="group relative p-8 rounded-[32px] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:bg-blue-50/10 transition-all duration-500 min-h-[200px] overflow-hidden"
+          className="group relative p-8 rounded-[40px] border-2 border-dashed border-slate-100 flex flex-col items-center justify-center text-slate-300 hover:border-blue-400 hover:bg-blue-50/5 transition-all duration-500 min-h-[250px]"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white group-hover:rotate-90 group-hover:shadow-xl group-hover:shadow-blue-500/20 transition-all duration-500 relative z-10">
+          <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-blue-500/20">
             <PlusIcon size={28} />
           </div>
-          <span className="font-black text-[10px] uppercase tracking-widest relative z-10">Add Timer</span>
+          <span className="font-black text-[10px] uppercase tracking-[0.2em]">Add New Timer</span>
         </button>
       </div>
 
+      {/* Popups remain standard but styled consistently */}
       <PopupTransition open={showAddMenu} setOpen={setShowAddMenu}>
-        <div className="relative w-full max-w-sm bg-white rounded-[40px] p-8 shadow-2xl border border-slate-100">
+        <div className="relative w-full max-w-sm bg-white rounded-[40px] p-10 shadow-2xl border border-slate-100">
           <PopupLayout
             title="Create Timer"
-            description="Configure your new stopwatch or countdown."
+            description="Configure your next session."
             footer={
               <button
                 onClick={() => setShowAddMenu(false)}
-                className="w-full py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 transition-all text-sm"
+                className="w-full py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-50 transition-all text-xs uppercase tracking-widest"
               >
                 Cancel
               </button>
             }
           >
-            <div className="space-y-4 mb-8">
-              <input
-                type="text"
-                value={newTimerName}
-                onChange={(e) => setNewTimerName(e.target.value)}
-                placeholder="Timer Name (e.g. Coding)"
-                className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 focus:outline-none focus:border-blue-200"
-              />
+            <div className="space-y-6 mb-10">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
-                  Countdown Duration (mins)
-                </label>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</p>
+                <input
+                  type="text"
+                  value={newTimerName}
+                  onChange={(e) => setNewTimerName(e.target.value)}
+                  placeholder="e.g. Design Sprint"
+                  className="w-full bg-slate-50 border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-blue-100 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Goal (Minutes)</p>
                 <input
                   type="number"
                   value={newTimerMins}
                   onChange={(e) => setNewTimerMins(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 focus:outline-none focus:border-blue-200"
+                  className="w-full bg-slate-50 border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-blue-100 transition-all"
                 />
               </div>
             </div>
@@ -185,13 +181,13 @@ export default function TimerManager({ onLogSession }: TimerManagerProps) {
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleAdd("up")}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all"
+                className="bg-blue-600 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
               >
                 Stopwatch
               </button>
               <button
                 onClick={() => handleAdd("down")}
-                className="flex-1 bg-slate-800 text-white py-3 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all"
+                className="bg-slate-900 text-white py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-lg"
               >
                 Countdown
               </button>

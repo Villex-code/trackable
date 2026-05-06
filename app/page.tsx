@@ -30,54 +30,66 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen w-full flex bg-white overflow-hidden font-sans">
       {/* Left Panel: The Branding */}
-      <div className="hidden lg:flex w-1/2 bg-[#2D2926] relative flex-col justify-between p-16 overflow-hidden rounded-r-[60px] shadow-[20px_0_60px_-15px_rgba(0,0,0,0.3)]">
-        {/* Animated background subtle glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-orange-500/5 rounded-full blur-[120px]" />
+      <div className="hidden lg:flex w-[45%] bg-[#2D2926] relative flex-col justify-between pt-16 pl-16 rounded-r-[60px] shadow-[20px_0_60px_-15px_rgba(0,0,0,0.3)] z-10">
+        {/* Isolated Background Overflow */}
+        <div className="absolute inset-0 overflow-hidden rounded-r-[60px] z-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-orange-500/5 rounded-full blur-[120px]" />
+        </div>
 
         {/* Top Tagline */}
         <div className="relative z-10">
-          <p className="text-white/40 text-xs font-bold uppercase tracking-[0.2em]">
+          <p className="text-white/40 text-[10px] mb-8 font-black uppercase tracking-[0.3em]">
             Engine for your daily evolution
           </p>
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 mb-20">
-          <h1 className="text-white text-[84px] font-bold leading-[0.95] tracking-tight mb-12">
+        <div className="relative z-10">
+          <h1 className="text-white text-[clamp(60px,8vw,90px)] font-bold leading-[0.9] tracking-tighter mb-12">
             Manage <br />
             your growth
           </h1>
 
-          {/* Phone Graphic Placeholder */}
-          <div className="relative mt-12 transform hover:scale-105 transition-transform duration-700">
-            <div className="absolute -inset-4 bg-brand-orange-500/20 rounded-[60px] blur-2xl" />
-            <img
-              src="/graphics/phone_mockup.png"
-              alt="Trackable Mobile"
-              className="relative w-80 shadow-2xl rounded-[48px] border-[8px] border-slate-900"
-              onError={(e) => {
-                e.currentTarget.src =
-                  "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=600";
-              }}
-            />
+          {/* System Online Indicator */}
+          <div className="flex items-center space-x-4 mb-12">
+            <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+              <div className="w-2.5 h-2.5 bg-brand-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+            </div>
+            <span className="text-white/20 text-[10px] font-black uppercase tracking-widest">
+              System Online
+            </span>
           </div>
         </div>
 
-        {/* Bottom Logo/Indicator */}
-        <div className="relative z-10 flex items-center space-x-4">
-          <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
-            <div className="w-2.5 h-2.5 bg-brand-orange-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+        {/* Bottom Graphic Section - No Overflow Hidden Here */}
+        <div className="relative mt-auto w-full h-[400px] z-10">
+          {/* Abstract Concentric Circles & Shadows Behind Mockup */}
+          <div className="absolute bottom-0 left-[-10%] w-[120%] h-full flex items-center justify-center pointer-events-none">
+            {/* Outer Large Circle */}
+            <div className="absolute w-[500px] h-[500px] rounded-full border border-white/[0.03] animate-[pulse_8s_infinite]" />
+
+            {/* Inner Smaller Circle */}
+            <div className="absolute w-[300px] h-[300px] rounded-full border border-white/[0.05]" />
+
+            {/* Abstract Orange Shadow/Glow */}
+            <div className="absolute w-[400px] h-[400px] bg-brand-orange-500/20 rounded-full blur-[100px] translate-y-20 -translate-x-10" />
           </div>
-          <span className="text-white/20 text-[10px] font-black uppercase tracking-widest">
-            System Online
-          </span>
+
+          {/* The Mockup - Moved slightly to the left, shadow allowed to bleed */}
+          <div className="relative z-20 w-full h-full flex items-end -translate-x-12 translate-y-8">
+            <img
+              src="/graphics/mockup.png"
+              alt="Trackable Mockup"
+              className="w-[90%] h-auto object-contain select-none pointer-events-none drop-shadow-[0_40px_80px_rgba(0,0,0,0.8)]"
+            />
+          </div>
         </div>
       </div>
 
       {/* Right Panel: The Sign In */}
-      <div className="w-full lg:w-1/2 flex flex-col p-10 lg:p-24 relative bg-white">
-        {/* Top Bar */}
-        <div className="flex items-center justify-between mb-32 w-full">
+      <div className="w-full lg:w-[55%] flex flex-col p-6 lg:p-12 xl:p-16 relative bg-white z-0">
+        {/* Top Bar - Pushed to the Edges */}
+        <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-slate-100 border border-slate-50 p-2.5">
               <img
@@ -93,7 +105,7 @@ export default function LoginPage() {
 
           <button
             onClick={handleJoke}
-            className="flex items-center space-x-2 text-slate-400 hover:text-slate-800 transition-all font-bold text-sm group"
+            className="flex items-center space-x-2 text-slate-400 hover:text-slate-800 transition-all font-bold text-sm group px-4 py-2"
           >
             <UserPlusIcon
               size={18}
@@ -105,23 +117,25 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Login Form Section */}
-        <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
-          <h2 className="text-[48px] font-black text-slate-800 mb-4 tracking-tighter leading-none">
-            Sign In
-          </h2>
-          <p className="text-slate-400 font-medium mb-12 ml-1">
-            Welcome back to your command center.
-          </p>
+        {/* Login Form Section - Centered */}
+        <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto">
+          <div className="text-center w-full">
+            <h2 className="text-[56px] lg:text-[72px] font-black text-slate-800 mb-4 tracking-tighter leading-none">
+              Sign In
+            </h2>
+            <p className="text-slate-400 font-medium mb-16">
+              Welcome back to your command center.
+            </p>
+          </div>
 
           {/* Social Login ONLY */}
-          <div className="space-y-8">
+          <div className="w-full space-y-10">
             <button
               onClick={loginWithGoogle}
-              className="w-full group flex items-center justify-between bg-brand-orange-500 text-white pl-8 pr-6 py-5 rounded-full font-bold text-lg hover:bg-brand-orange-600 transition-all shadow-2xl shadow-brand-orange-500/30 transform hover:-translate-y-1 active:scale-95"
+              className="w-full group flex items-center justify-between bg-brand-orange-500 text-white pl-10 pr-8 py-6 rounded-full font-bold text-xl hover:bg-brand-orange-600 transition-all shadow-2xl shadow-brand-orange-500/30 transform hover:-translate-y-1 active:scale-95"
             >
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center p-1.5 shadow-inner">
+              <div className="flex items-center space-x-6">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center p-2 shadow-inner">
                   <svg viewBox="0 0 24 24" className="w-full h-full">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -144,15 +158,15 @@ export default function LoginPage() {
                 <span>Google Account</span>
               </div>
               <ChevronRightIcon
-                size={20}
-                className="group-hover:translate-x-1 transition-transform"
+                size={24}
+                className="group-hover:translate-x-2 transition-transform"
               />
             </button>
 
-            <div className="flex flex-col items-center space-y-6">
+            <div className="flex flex-col items-center">
               <button
                 onClick={handleJoke}
-                className="text-slate-400 font-bold hover:text-brand-orange-500 transition-colors text-[10px] uppercase tracking-widest"
+                className="text-slate-400 font-black hover:text-brand-orange-500 transition-colors text-[11px] uppercase tracking-[0.2em]"
               >
                 Forgot password?
               </button>
@@ -160,11 +174,11 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer Bar */}
-        <div className="mt-auto flex flex-col sm:flex-row items-center justify-between text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] gap-6">
+        {/* Footer Bar - Pushed to the Edges */}
+        <div className="flex flex-col sm:flex-row items-center justify-between text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] gap-6 w-full">
           <p>© 2026-2027 TRACKABLE INC.</p>
 
-          <div className="flex items-center space-x-10">
+          <div className="flex items-center space-x-12">
             <button
               onClick={handleJoke}
               className="hover:text-slate-800 transition-colors"

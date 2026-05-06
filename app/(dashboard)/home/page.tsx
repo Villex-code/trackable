@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <div className="space-y-12 pb-20 animate-fade-in">
       {/* Header with Welcome Message & Profile */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-20">
         <AlternatingWelcome />
         <HomeProfile />
       </div>

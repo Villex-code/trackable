@@ -17,7 +17,17 @@ export default function LogItem({ log, onDelete }: LogItemProps) {
           <h4 className="font-bold text-slate-800 truncate max-w-[120px] md:max-w-none">
             {log.description || (log.type === 'input' ? 'Meal' : 'Activity')}
           </h4>
-          <p className="text-xs text-slate-400 font-medium">{format(new Date(log.logged_at), "h:mm a")}</p>
+          <div className="flex items-center space-x-2">
+            <p className="text-xs text-slate-400 font-medium">{format(new Date(log.logged_at), "h:mm a")}</p>
+            {log.protein && (
+              <>
+                <span className="text-slate-200 text-[10px]">•</span>
+                <span className="text-[10px] font-bold text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded-md border border-orange-100">
+                  {log.protein}g protein
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex items-center space-x-4">

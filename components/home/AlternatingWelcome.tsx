@@ -38,11 +38,11 @@ export default function AlternatingWelcome() {
 
   return (
     <div className="space-y-2 animate-fade-in">
-      <h2 className="text-4xl font-black text-slate-800 tracking-tight leading-tight">
+      <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-tight drop-shadow-sm">
         {message}
       </h2>
-      <p className="text-slate-400 font-medium text-lg">
-        Here's a quick look at your progress today.
+      <p className="text-slate-600 font-medium text-lg">
+        Here&apos;s a quick look at your progress today.
       </p>
     </div>
   );

@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS weight_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  weight DECIMAL(5,2) NOT NULL,
+  logged_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE weight_logs DISABLE ROW LEVEL SECURITY;

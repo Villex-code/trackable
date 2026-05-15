@@ -4,7 +4,7 @@ interface NutritionCardProps {
   title: string;
   value: string | number;
   icon: LucideIcon;
-  color: "orange" | "blue" | "purple" | "emerald" | "red";
+  color: "orange" | "blue" | "purple" | "emerald" | "red" | "amber";
   unit?: string;
 }
 
@@ -15,6 +15,7 @@ export default function NutritionCard({ title, value, icon: Icon, color, unit = 
     purple: "text-purple-500 bg-purple-50",
     emerald: "text-emerald-500 bg-emerald-50",
     red: "text-red-500 bg-red-50",
+    amber: "text-amber-500 bg-amber-50",
   };
 
   return (

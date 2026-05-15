@@ -21,12 +21,12 @@ export default function PopupLayout({
   return (
     <div className={cn("flex flex-col h-full", className)}>
       {/* Header */}
-      <div className="mb-8">
-        <h3 className="text-3xl font-bold text-slate-800 tracking-tight leading-tight">
+      <div className="mb-5">
+        <h3 className="text-xl font-black text-slate-800 tracking-tight leading-tight">
           {title}
         </h3>
         {description && (
-          <p className="mt-2 text-slate-400 font-medium text-sm leading-relaxed">
+          <p className="mt-1 text-slate-400 font-medium text-sm">
             {description}
           </p>
         )}
@@ -36,7 +36,7 @@ export default function PopupLayout({
       <div className="flex-1">{children}</div>
 
       {/* Footer Actions */}
-      {footer && <div className="mt-10 flex gap-4">{footer}</div>}
+      {footer && <div className="mt-5 flex gap-3">{footer}</div>}
     </div>
   );
 }

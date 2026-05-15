@@ -6,8 +6,8 @@ import HomeProfile from "@/components/home/HomeProfile";
 import QuickAnalytics from "@/components/home/QuickAnalytics";
 import ActiveSnippet from "@/components/home/ActiveSnippet";
 import { LayoutGridIcon, ActivityIcon } from "lucide-react";
-
 import HomeCharts from "@/components/home/HomeCharts";
+import MainContentWrapper from "@/components/MainContentWrapper";
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -15,43 +15,51 @@ export default function HomePage() {
   if (!user) return null;
 
   return (
-    <div className="space-y-12 pb-20 animate-fade-in">
-      {/* Header with Welcome Message & Profile */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-20">
-        <AlternatingWelcome />
-        <HomeProfile />
+    <MainContentWrapper
+      topbarBody={
+        <div className="flex items-center gap-2.5">
+          <div className="w-2 h-2 rounded-full bg-brand-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+          <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em]">
+            Overview
+          </span>
+        </div>
+      }
+    >
+      <div className="space-y-12 pb-24 animate-fade-in">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-20">
+          <AlternatingWelcome />
+          <HomeProfile />
+        </div>
+
+        <section className="space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-sm">
+            <ActivityIcon size={12} className="text-brand-orange-500" />
+            <h3 className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
+              Intelligence Snapshot
+            </h3>
+          </div>
+          <QuickAnalytics userId={user.uid} />
+        </section>
+
+        <section className="space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-sm">
+            <LayoutGridIcon size={12} className="text-blue-500" />
+            <h3 className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
+              Active Engine Snippet
+            </h3>
+          </div>
+          <ActiveSnippet userId={user.uid} />
+        </section>
+
+        <section className="space-y-8 pb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/50 shadow-sm">
+            <h3 className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-600">
+              Activity Trends
+            </h3>
+          </div>
+          <HomeCharts userId={user.uid} />
+        </section>
       </div>
-
-      {/* Quick Analytics Summary (The Snapshot) */}
-      <section className="space-y-8">
-        <div className="flex items-center space-x-3 px-2">
-           <ActivityIcon size={18} className="text-brand-orange-500" />
-           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Intelligence Snapshot</h3>
-        </div>
-        <QuickAnalytics userId={user.uid} />
-      </section>
-
-      {/* Active Snippet Section (The "Active" Hub) */}
-      <section className="space-y-8">
-        <div className="flex items-center space-x-3 px-2">
-           <LayoutGridIcon size={18} className="text-blue-500" />
-           <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Active Engine Snippet</h3>
-        </div>
-        <ActiveSnippet userId={user.uid} />
-      </section>
-
-      {/* Charts & Trends */}
-      <section className="space-y-8 pb-10">
-        <div className="flex items-center justify-between px-2">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Activity Trends</h3>
-        </div>
-        <HomeCharts userId={user.uid} />
-      </section>
-
-      {/* Background Graphic */}
-      <div className="fixed top-0 right-0 -z-10 opacity-5 pointer-events-none">
-         <img src="/graphics/pattern.png" alt="" className="w-full h-full object-cover" />
-      </div>
-    </div>
+    </MainContentWrapper>
   );
 }

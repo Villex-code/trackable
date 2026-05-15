@@ -1,7 +1,14 @@
 "use client";
 
+function isDarkHex(hex: string): boolean {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+}
+
 import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,9 +37,13 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
     localStorage.setItem("dashboard-bg", type);
   };
 
+  const darkPresets = new Set([
+    "ember", "midnight", "obsidian", "crimson", "abyss", "void", "dusk",
+  ]);
+  const isDark = darkPresets.has(bgType) || (bgType.startsWith("#") && isDarkHex(bgType));
+
   const getBgStyle = () => {
     if (!mounted) return { backgroundColor: "#fffcf9" };
-    // Image (URL or Data URL)
     if (bgType.startsWith("http") || bgType.startsWith("data:")) {
       return {
         backgroundImage: `url(${bgType})`,
@@ -40,29 +51,34 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         backgroundPosition: "center",
       };
     }
-
-    // Solid Color
     if (bgType.startsWith("#")) {
       return { backgroundColor: bgType };
     }
-
     const gradients: Record<string, string> = {
-      "soft-peach": "linear-gradient(135deg, #fffaf5 0%, #fff1e6 100%)",
-      "misty-rose": "linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%)",
-      "powder-blue": "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
-      "sage-light": "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+      // Dark presets
+      ember:    "linear-gradient(135deg, #431407 0%, #9a3412 100%)",
+      midnight: "linear-gradient(135deg, #020617 0%, #0f172a 100%)",
+      obsidian: "linear-gradient(135deg, #09090b 0%, #1c1917 100%)",
+      crimson:  "linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%)",
+      abyss:    "linear-gradient(135deg, #042f2e 0%, #134e4a 100%)",
+      void:     "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+      dusk:     "linear-gradient(135deg, #1c1007 0%, #292524 100%)",
+      // Legacy light presets
+      "soft-peach":    "linear-gradient(135deg, #fffaf5 0%, #fff1e6 100%)",
+      "misty-rose":    "linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%)",
+      "powder-blue":   "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
+      "sage-light":    "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
       "lavender-mist": "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
-      "sunset-soft": "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
-      warm: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 50%, #fdba74 100%)",
+      "sunset-soft":   "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
+      warm:            "linear-gradient(135deg, #ffedd5 0%, #fed7aa 50%, #fdba74 100%)",
       default: "#fffcf9",
     };
-
     return { background: gradients[bgType] || gradients.default };
   };
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user, loading, router]);
 
@@ -78,6 +94,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      data-dark={isDark ? "true" : "false"}
       className="flex min-h-screen overflow-hidden relative transition-all duration-1000"
       style={getBgStyle()}
     >
@@ -100,14 +117,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </div>
       </PopupTransition>
 
-      {/* Sidebar - Sticky on desktop, overlay on mobile */}
       <Sidebar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 transition-all duration-500 ease-in-out lg:p-6">
-        <div className="flex-1 w-full max-w-[1600px] mx-auto glass rounded-t-[40px] lg:rounded-[48px] overflow-hidden flex flex-col relative bg-white/40 shadow-sm border border-brand-orange-100/30 backdrop-blur-md">
-          {/* Decorative background elements - Strictly Orange */}
-          <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 transition-all duration-500 ease-in-out">
+        <div className={`flex-1 w-full overflow-hidden flex flex-col relative backdrop-blur-sm min-h-0 transition-colors duration-1000 ${isDark ? "bg-white/30" : "bg-white/65"}`}>
+          {/* Decorative orange circle */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-[0.025] pointer-events-none overflow-hidden">
             <svg
               width="100%"
               height="100%"
@@ -117,14 +132,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             >
               <circle cx="50" cy="50" r="40" fill="url(#grad1)" />
               <defs>
-                <radialGradient
-                  id="grad1"
-                  cx="50%"
-                  cy="50%"
-                  r="50%"
-                  fx="50%"
-                  fy="50%"
-                >
+                <radialGradient id="grad1" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#f97316" />
                   <stop offset="100%" stopColor="transparent" />
                 </radialGradient>
@@ -132,11 +140,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </svg>
           </div>
 
-          <div className="relative z-10 h-full flex flex-col overflow-hidden">
-            {/* Page content */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar bg-white/80 backdrop-blur-sm p-4 lg:p-8 pt-4">
-              {children}
-            </div>
+          <div className="relative z-10 flex-1 flex flex-col min-h-0">
+            {children}
           </div>
         </div>
       </main>

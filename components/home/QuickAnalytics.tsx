@@ -19,6 +19,7 @@ export default function QuickAnalytics({ userId }: { userId: string }) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"input" | "output">("input");
+  const [quickSaving, setQuickSaving] = useState<string | null>(null);
   const supabase = createClient();
 
   const fetchData = useCallback(async () => {
@@ -61,6 +62,21 @@ export default function QuickAnalytics({ userId }: { userId: string }) {
   useEffect(() => {
     if (userId) fetchData();
   }, [userId, fetchData]);
+
+  async function quickAdd(kind: "cal" | "protein", amount: number) {
+    const key = `${kind}-${amount}`;
+    setQuickSaving(key);
+    await supabase.from("calorie_logs").insert({
+      user_id: userId,
+      amount: kind === "cal" ? amount : 0,
+      type: "input",
+      description: "Quick add",
+      protein: kind === "protein" ? amount : null,
+      logged_at: new Date().toISOString(),
+    });
+    await fetchData();
+    setQuickSaving(null);
+  }
 
   const handleAddLog = async (amount: number, type: "input" | "output", description: string, protein?: number) => {
     await supabase.from("calorie_logs").insert({
@@ -181,6 +197,61 @@ export default function QuickAnalytics({ userId }: { userId: string }) {
           >
             <ArrowRightIcon size={14} />
           </Link>
+        </div>
+      </div>
+
+      {/* Mobile quick-add strips */}
+      <div className="xl:hidden space-y-3">
+        {/* Calories */}
+        <div className="bg-white/85 backdrop-blur-md px-5 py-4 rounded-[24px] border border-brand-orange-100/30 shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Quick Add Calories</p>
+          <div className="grid grid-cols-4 gap-2">
+            {[50, 100, 200, 500].map(amt => {
+              const key = `cal-${amt}`;
+              const saving = quickSaving === key;
+              return (
+                <button
+                  key={amt}
+                  type="button"
+                  onClick={() => quickAdd("cal", amt)}
+                  disabled={!!quickSaving}
+                  className={`py-3 rounded-2xl text-xs font-black transition-all duration-150 active:scale-95 disabled:opacity-50 ${
+                    saving
+                      ? "bg-brand-orange-500 text-white border border-brand-orange-500"
+                      : "bg-brand-orange-50 border border-brand-orange-100 text-brand-orange-600 hover:bg-brand-orange-500 hover:text-white hover:border-brand-orange-500"
+                  }`}
+                >
+                  +{amt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Protein */}
+        <div className="bg-white/85 backdrop-blur-md px-5 py-4 rounded-[24px] border border-brand-orange-100/30 shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">Quick Add Protein</p>
+          <div className="grid grid-cols-4 gap-2">
+            {[10, 20, 30, 50].map(amt => {
+              const key = `protein-${amt}`;
+              const saving = quickSaving === key;
+              return (
+                <button
+                  key={amt}
+                  type="button"
+                  onClick={() => quickAdd("protein", amt)}
+                  disabled={!!quickSaving}
+                  className={`py-3 rounded-2xl text-xs font-black transition-all duration-150 active:scale-95 disabled:opacity-50 ${
+                    saving
+                      ? "bg-emerald-500 text-white border border-emerald-500"
+                      : "bg-emerald-50 border border-emerald-100 text-emerald-600 hover:bg-emerald-500 hover:text-white hover:border-emerald-500"
+                  }`}
+                >
+                  +{amt}g
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
